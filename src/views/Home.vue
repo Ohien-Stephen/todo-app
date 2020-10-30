@@ -5,6 +5,7 @@
       <button>&plus;</button>
     </form>
     <div class="todo-container">
+      <p v-if="loading" style="padding:10px;">Loading....</p>
       <todos @check-todo="checkTodo" @del-todo="DeleteTodo" :todos="todos"/>
     </div>
   </div>
@@ -22,12 +23,14 @@ export default {
   data(){
     return{
       title:'',
+      loading:false,
       todos:[
-        {id:1, title:"Cook Rice", completed:true},
+        /*{id:1, title:"Cook Rice", completed:true},
         {id:2, title:"Create a todo app", completed:false},
         {id:3, title:"Write a Novel", completed:true},
         {id:4, title:"Make a Vuex Tutorals", completed:false},
-        {id:4, title:"Go to the Mall", completed:false},
+        {id:5, title:"Go to the Mall", completed:false}
+        */
       ]
     }
   },
@@ -47,6 +50,18 @@ export default {
     DeleteTodo(id){
       this.todos = this.todos.filter(todo=> todo.id !== id);
     }
+  },
+  created() {
+    this.loading = true;
+      fetch('https://localhost:44319/todos')
+      .then(res => res.json())
+      .then(data => {
+        setTimeout(() => {
+          this.todos = data;                  
+          this.loading = false;
+        },500)
+      })
+      .catch(err => console.error(err))
   }
 }
 </script>
